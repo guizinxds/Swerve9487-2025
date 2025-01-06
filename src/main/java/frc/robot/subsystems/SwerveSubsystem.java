@@ -36,7 +36,6 @@ public class SwerveSubsystem extends SubsystemBase {
     // Objeto global autônomo
     // ConfigAuto autonomo;
 
-
     // Método construtor da classe
     public SwerveSubsystem(File directory) {
 
@@ -61,9 +60,7 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.setHeadingCorrection(false);
     }
 
-    public void setHeadingCorrection(boolean setHeadingCorrection){
-      swerve.swerveDrive.setHeadingCorrection(setHeadingCorrection);
-    }
+
     
     @Override
     public void periodic() {
