@@ -36,7 +36,6 @@ public class SwerveSubsystem extends SubsystemBase {
     // Objeto global autônomo
     // ConfigAuto autonomo;
 
-    private SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
 
     // Método construtor da classe
     public SwerveSubsystem(File directory) {
@@ -48,8 +47,8 @@ public class SwerveSubsystem extends SubsystemBase {
         // Acessa os arquivos do diretório .JSON
         try {
           
-        swerveDrive = new SwerveParser(directory).createSwerveDrive(Tracao.MAX_SPEED, 
-        Dimensoes.angleConversion, Dimensoes.driveConversion);
+          swerveDrive = new SwerveParser(directory).createSwerveDrive(Tracao.MAX_SPEED);
+
        
         } catch (Exception e) {
           throw new RuntimeException(e);
@@ -59,7 +58,7 @@ public class SwerveSubsystem extends SubsystemBase {
         
         // autonomo.setupPathPlanner();
 
-        swerveDrive.setHeadingCorrection(true);
+        swerveDrive.setHeadingCorrection(false);
     }
 
     public void setHeadingCorrection(boolean setHeadingCorrection){
