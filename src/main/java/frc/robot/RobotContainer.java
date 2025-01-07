@@ -20,7 +20,7 @@ import java.io.File;
 public class RobotContainer {
 
 
-  private final SendableChooser<Command> autoChooser;
+  // private final SendableChooser<Command> autoChooser;
 
   private SwerveSubsystem swerve = new SwerveSubsystem(
     new File(Filesystem.getDeployDirectory(), "swerve")
@@ -32,8 +32,8 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    autoChooser = AutoBuilder.buildAutoChooser("a pecuaria tentara");
-    SmartDashboard.putData("Auto", autoChooser);
+    // autoChooser = AutoBuilder.buildAutoChooser("a pecuaria tentara");
+    // SmartDashboard.putData("Auto", autoChooser);
 
 
     setDefaultCommands();
@@ -103,7 +103,9 @@ public class RobotContainer {
 
   // Função que retorna o autônomo
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+
+    return null;
+
   }
 
   // Define os motores como coast ou brake
