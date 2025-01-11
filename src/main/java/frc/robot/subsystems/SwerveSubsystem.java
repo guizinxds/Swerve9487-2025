@@ -31,8 +31,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveDrive swerveDrive;
     public boolean correctionPID = false;
 
-    // Objeto global autônomo
-    // ConfigAuto autonomo;
+     //Objeto global autônomo
+    //  ConfigAuto autonomo;
 
     // Método construtor da classe
     public SwerveSubsystem(File directory) {
@@ -50,15 +50,13 @@ public class SwerveSubsystem extends SubsystemBase {
           throw new RuntimeException(e);
         }
 
-        // autonomo = new ConfigAuto(this);
+          // autonomo = new ConfigAuto(this);
         
-        // autonomo.setupPathPlanner();
+          // autonomo.setupPathPlanner();
 
-        swerveDrive.setHeadingCorrection(false);
+        swerveDrive.setHeadingCorrection(true);
     }
-
-
-    
+                                                                                                                
     @Override
     public void periodic() {
       // Dentro da função periódica atualizamos nossa odometria

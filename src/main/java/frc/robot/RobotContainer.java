@@ -11,11 +11,15 @@ import frc.robot.Constants.Controle;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.io.File;
+// import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+// import com.pathplanner.lib.auto.AutoBuilder;
 
 public class RobotContainer {
 
 
-  // private final SendableChooser<Command> autoChooser;
+  //  private final SendableChooser<Command> autoChooser;
 
   private SwerveSubsystem swerve = new SwerveSubsystem(
     new File(Filesystem.getDeployDirectory(), "swerve")
@@ -27,8 +31,8 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    // autoChooser = AutoBuilder.buildAutoChooser("a pecuaria tentara");
-    // SmartDashboard.putData("Auto", autoChooser);
+    //  autoChooser = AutoBuilder.buildAutoChooser();
+    //  SmartDashboard.putData("Auto", autoChooser);
 
 
     setDefaultCommands();
