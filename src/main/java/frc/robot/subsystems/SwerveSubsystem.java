@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.io.File;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -18,97 +19,81 @@ import frc.robot.Constants.Tracao;
 // import frc.robot.commands.Auto.ConfigAuto;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
+import swervelib.SwerveInputStream;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 
-/** 
+/**
  * Classe de subsistema onde fazemos a ponte do nosso código para YAGSL
  */
 public class SwerveSubsystem extends SubsystemBase {
-    // Objeto global da SwerveDrive (Classe YAGSL)
-    public SwerveDrive swerveDrive;
-    public boolean correctionPID = false;
+  private final SwerveDrive swerveDrive;
+  public boolean correctionPID = false;
 
-     //Objeto global autônomo
-    //  ConfigAuto autonomo;
+  // Objeto global autônomo
+  // ConfigAuto autonomo;
 
-    // Método construtor da classe
-    public SwerveSubsystem(File directory) {
+  // Método construtor da classe
+  public SwerveSubsystem(File directory) {
 
-        // Seta a telemetria como nível mais alto
-        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
-        // Acessa os arquivos do diretório .JSON
-        try {
-          
-          swerveDrive = new SwerveParser(directory).createSwerveDrive(Tracao.MAX_SPEED);
-
-       
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-
-          // autonomo = new ConfigAuto(this);
-        
-          // autonomo.setupPathPlanner();
-
-        swerveDrive.setHeadingCorrection(true);
+    try {
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(Tracao.MAX_SPEED);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
-                                                                                                                
-    @Override
-    public void periodic() {
-      // Dentro da função periódica atualizamos nossa odometria
-      swerveDrive.updateOdometry();
-    }
+    // autonomo = new ConfigAuto(this);
 
-    // Função drive que chamamos em nossa classe de comando Teleoperado
-    public void drive(Translation2d translation, double rotation, boolean fieldRelative) 
-    {
-        swerveDrive.drive(translation, rotation, fieldRelative, false);
-    }
+    // autonomo.setupPathPlanner();
 
-    // Função para obter a velocidade desejada a partir dos inputs do gamepad
-    public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
-  {
-    return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, headingX, headingY, 
-    getHeading().getRadians());
+    swerveDrive.setHeadingCorrection(true);
+  }
+
+  @Override
+  public void periodic() {
+    swerveDrive.updateOdometry();
+  }
+
+  public void driveFieldOriented(Supplier<ChassisSpeeds> velocity) {
+    swerveDrive.driveFieldOriented(velocity.get());
+  }
+
+  public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY) {
+    return swerveDrive.swerveController.getTargetSpeeds(
+        xInput,
+        yInput,
+        headingX,
+        headingY,
+        getHeading().getRadians());
   }
 
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput) {
     return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, 0, 0, 0, Tracao.MAX_SPEED);
   }
 
-  // Função que retorna a posição do robô (translação e ângulo), (Usado no autônomo)
-  public Pose2d getPose()
-  {
+  public Pose2d getPose() {
     return swerveDrive.getPose();
   }
-  
-  // Retorna a velocidade relativa ao campo
-  public ChassisSpeeds getFieldVelocity()
-  {
+
+  public ChassisSpeeds getFieldVelocity() {
     return swerveDrive.getFieldVelocity();
   }
 
-  // Retorna a configuração do swerve
-  public SwerveDriveConfiguration getSwerveDriveConfiguration()
-  {
+  public SwerveDriveConfiguration getSwerveDriveConfiguration() {
     return swerveDrive.swerveDriveConfiguration;
   }
 
-  // Retorna o objeto de controle, o qual é usado para acessar as velocidades máximas por exemplo
   public SwerveController getSwerveController() {
     return swerveDrive.getSwerveController();
   }
 
-  // Ângulo atual do robô
   public Rotation2d getHeading() {
     return swerveDrive.getYaw();
   }
 
-  // Reseta a odometria para uma posição indicada (Usado no autônomo)
   public void resetOdometry(Pose2d posicao) {
     swerveDrive.resetOdometry(posicao);
   }
@@ -121,42 +106,43 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setHeadingCorrection(true);
     correctionPID = true;
   }
+
   public void disableHeading() {
     correctionPID = false;
     swerveDrive.setHeadingCorrection(false);
   }
 
-  // Seta a velocidade do chassi (Usado no autônomo)
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
     swerveDrive.setChassisSpeeds(chassisSpeeds);
   }
 
-  public void setMotorBrake(boolean brake)
-  {
+  public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);
   }
 
-  public ChassisSpeeds getRobotVelocity()
-  {
+  public ChassisSpeeds getRobotVelocity() {
     return swerveDrive.getRobotVelocity();
   }
 
   public ChassisSpeeds discretize(ChassisSpeeds speeds) {
     var desiredDeltaPose = new Pose2d(
-      speeds.vxMetersPerSecond * Tracao.dt, 
-      speeds.vyMetersPerSecond * Tracao.dt, 
-      new Rotation2d(speeds.omegaRadiansPerSecond * Tracao.dt * Tracao.constantRotation)
-    );
+        speeds.vxMetersPerSecond * Tracao.dt,
+        speeds.vyMetersPerSecond * Tracao.dt,
+        new Rotation2d(speeds.omegaRadiansPerSecond * Tracao.dt * Tracao.constantRotation));
+        
     var twist = new Pose2d().log(desiredDeltaPose);
 
     return new ChassisSpeeds((twist.dx / Tracao.dt), (twist.dy / Tracao.dt), (speeds.omegaRadiansPerSecond));
   }
 
+  public Command getAutonomousCommand(String pathName, boolean setOdomToStart) {
 
-    public Command getAutonomousCommand(String pathName, boolean setOdomToStart)
-  {
-    
-    // Create a path following command using AutoBuilder. This will also trigger event markers.
+    // Create a path following command using AutoBuilder. This will also trigger
+    // event markers.
     return new PathPlannerAuto(pathName);
+  }
+
+  public SwerveDrive getSwerveDrive() {
+    return swerveDrive;
   }
 }
