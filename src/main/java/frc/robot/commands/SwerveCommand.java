@@ -45,12 +45,26 @@ public class SwerveCommand extends Command {
   @Override
   public void execute() {
     if (toggleSpeed.getAsBoolean()) {
-      fastSpeedMode = fastSpeedMode == StateStrings.ON ? StateStrings.OFF : StateStrings.OFF;
+      switch (fastSpeedMode) {
+        case StateStrings.ON:
+          fastSpeedMode = StateStrings.OFF;
+          break;
+  
+        case StateStrings.OFF:
+          fastSpeedMode = StateStrings.ON;
+          break;
+      }
     }
+    
+    switch (fastSpeedMode) {
+      case StateStrings.ON:
+        drive(1.0);
+        break;
 
-    double scaleTranslation = fastSpeedMode == StateStrings.ON ? 0.8 : 0.3;
-
-    drive(scaleTranslation);
+      case StateStrings.OFF:
+        drive(0.3);
+        break;
+    }
   }
 
   private void drive(double scaleTranslation) {
@@ -61,6 +75,7 @@ public class SwerveCommand extends Command {
         .withControllerRotationAxis(turn)
         .deadband(Controle.DEADBAND)
         .scaleTranslation(scaleTranslation)
+        .scaleRotation(scaleTranslation)
         .allianceRelativeControl(true);
 
       swerveSubsystem.driveFieldOriented(driveAngularVelocity);

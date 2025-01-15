@@ -11,15 +11,13 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Tracao;
-// import frc.robot.commands.Auto.ConfigAuto;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
-import swervelib.SwerveInputStream;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -124,12 +122,13 @@ public class SwerveSubsystem extends SubsystemBase {
     return swerveDrive.getRobotVelocity();
   }
 
+
   public ChassisSpeeds discretize(ChassisSpeeds speeds) {
     var desiredDeltaPose = new Pose2d(
         speeds.vxMetersPerSecond * Tracao.dt,
         speeds.vyMetersPerSecond * Tracao.dt,
         new Rotation2d(speeds.omegaRadiansPerSecond * Tracao.dt * Tracao.constantRotation));
-        
+
     var twist = new Pose2d().log(desiredDeltaPose);
 
     return new ChassisSpeeds((twist.dx / Tracao.dt), (twist.dy / Tracao.dt), (speeds.omegaRadiansPerSecond));
@@ -145,4 +144,6 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveDrive getSwerveDrive() {
     return swerveDrive;
   }
+
+
 }
